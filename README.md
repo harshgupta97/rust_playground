@@ -241,12 +241,210 @@ fn main() {
 fn another_function() {
     println!("Another function");
 }
+
+fn print_label_measure(value: i32, unit_label: char) {
+    println!("The measurement is: {value}{unit_label}");
+}
 ```
 
     - Statements - are instructions that perform some action and do not return a value;
 
     - Expression - evaluate to a resultant value. Let's look at some examples.
 
-    
+NOTE: Rust is an expression based language.
+
+    In rust statement does not return value, unlike c and ruby where assignment return the value of the assignment. And assignment in rust in rust is a statement.
+
+    Expression can be a part of statement, like let x = 6; where 6 is a expression which evaluate to the value 6.
+
+    calling a function and macro is an expression.
+
+```
+fn main() {
+    let y = {
+        let x = 5;
+        x + 1
+    };
+
+    println!("The value of y is: {y}");
+}
+```
+
+### Function with a return values
+
+```
+
+fn five() -> i32 {
+    5
+}
+
+fn main() {
+    let x = five();
+
+    println!("The value of x is: {x}");
+}
+
+fn add_one(x: i32) -> i32 {
+    x + 1
+}
+
+```
+
+### Control Flow
+
+- if
 
 
+```
+fn main() {
+    let nuber = 3;
+
+    if number < 5 {
+        println!("Condition was true");
+    } else {
+        println!("Condition was false");
+    }
+}
+```
+
+It is also worth noting that the condition in this code must be a bool. If the condition isn't a bool, we'll get an error.
+
+- else if
+
+```
+fn main() {
+    let number = 6;
+
+    if number % 4 == 0 {
+        println!("Number is divisible by 4");
+    } else if number % 3 == 0 {
+        println!("Number is divisible by 3");
+    } else if number % 2 = 0 {
+        println!("Number is divisible by 2");
+    } else {
+        println!("Number is not divisible by 4, 3, or 2");
+    }
+}
+```
+
+- using `if` in a let `statement`
+
+```
+fn main() {
+    let condition = true;
+    let number = if condition { 5 } else { 6 };
+
+    println!("The value of number is: {number}");
+}
+```
+
+NOTE: type need to same for `if` and `else` block
+
+- Repeating code with `loop`
+
+```
+fn main() {
+    loop {
+        println!("Again!");
+    }
+}
+```
+
+- returning values from Loops
+
+```
+fn main() {
+    let mut counter = 0;
+
+    let result = loop {
+        counter += 1;
+
+        if counter == 10 {
+            break counter * 2;
+        }
+    }
+
+    println!("The result is {result}");
+}
+```
+
+- loop label to disambiguate between multiple loops
+
+```
+fn main() {
+    let mut count = 0;
+
+    'counting_up': loop {
+        println!("count = {count}");
+
+        let mut remaining = 10;
+
+        loop {
+            println!("remaining = {remaining}");
+            if remaining == 9 {
+                break;
+            }
+            if count == 2 {
+                break 'continue_up';
+            }
+            remaining -= 1;
+        }
+        count += 1;
+    }
+
+    println!("End count = {count}");
+}
+```
+
+- conditional loop with `while`
+
+```
+fn main() {
+    let mut number = 3;
+
+    while number !=0 {
+        println!("{number}");
+
+        number -= 1;
+    }
+
+    println!("LIFTOFF!!!");
+}
+```
+
+- looping through a collection with `for`
+
+```
+fn main() {
+    let a = [1, 2, 3, 4, 5, 6, 7, 8];
+
+    let mut index = 0;
+
+    while index < 5 {
+        println!("the value is: {}", a[index]);
+    }
+
+    index += 1;
+
+    for element in a {
+        println!("the value is: {element}");
+    }
+}
+```
+
+```
+fn main() {
+    for number in (1..4).rev() {
+        println!("{number}!");
+    }
+
+    println!("LIFTOFF!!!");
+}
+```
+
+## Understanding Ownership
+
+It enable rust to make memory safety guarantees without needing a garbage collector.
+
+    - borrowing
+    - slices
