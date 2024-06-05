@@ -203,3 +203,120 @@ fn dangle() -> &String {
 
 ## The Slice Type
 
+Slice let you reference a contiguous sequence of elements in a collection rather than the whole collection. A slice is a kind of reference, so it does not have ownership.
+
+Write a function that takes a string of words seperated by spaces and returns the first word it finds in that string.
+
+```
+fn first_word(s: &String) -> usize {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return i;
+        }
+    }
+
+    s.len()
+}
+```
+
+With the help of above code we a way to find out the index of the end of the first word in the string, but there's a problem. We are returning a usize on its own, but it's only a meaningful number in the context of the &String. In other words, because it's a seperate value from the &String, there's no guarantee that it will still be valid in the future.
+
+Consider below code:
+
+```
+fn main() {
+    let mut s = String::from("hello world");
+
+    let word = first_word(&s);
+
+    s.clear();
+
+    // word still has the value 5 here, but there's no more string we could meaningfully use the value 5 with
+
+```
+
+### String Slices
+
+A string slices is a reference to part of a String, and it looks like this:
+
+```
+let s = String::from("hello world");
+
+let hello = &s[0..5];
+let world = &s[6..11];
+```
+
+We created a slices using a range within brackets by specifying `[starting_index..ending_index]`, 
+
+```
+fn first_word(s: &String) -> &str {
+    let bytes = s.as_bytes();
+
+    for (i, &item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &s[0..i];
+        }
+    }
+
+    &s[..]
+}
+```
+
+We now have a straightforward API that's much harder to mess up because the compiler will ensure the reference into the String remain valid. Remember the bug in the previous program when we got the index to the end of the first word but then cleared the string so our index is invalid? That code was logically incorrect but didn't show any immediated errors. The problems would show up later if we kept trying to use the first word index with an emptied string. Slices make this bug impossible and let us know we have a problem with our code much sooner.Using the slice version of the code it will throw a compile-time error
+
+```
+fn main() {
+    let mut s = String::from("Hello world");
+
+    let word = first_word(&s);
+
+    s.clear();
+
+    println!("The first word is: {}", word);
+}
+```
+
+Rust disallow the mutable reference in clear and the immutable reference in word from existing at the same time, and compilation fails.
+
+### String Literals as Slices
+
+```
+let s = "Hello, world!";
+```
+
+string literal are immutable, &str is an immutable reference.
+
+
+### String Slices as Parameters
+
+```
+fn first_word(s: &str) -> &str {}
+```
+
+By replacing the method parameter with the above one, it will allow us to use the same function on both &String values and &str values.
+
+
+
+```
+fn main() {
+
+    // String
+    let s = String::from("Hello World");
+
+    let word = first_word(&s[0..6]);
+    let word = first_word(&s[..]);
+
+    let word = first_word(&s);
+
+    // string literal
+    let sl = "Hello World";
+
+    let word = first_word(&sl[0..6]);
+    let word = first_word(&sl[..]);
+
+    let word = first_word(&sl);
+
+}
+```
